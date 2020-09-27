@@ -1,0 +1,54 @@
+{% extends 'base.html'%}
+
+{% block styles%}
+    {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/index.css')}}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+{% endblock %}
+<!-- Content block -->
+{% block content %}
+
+<div class="main">
+    <section class="jumbotron text-center" style="background-image: url('static/img/home-bg.jpg')">
+        <div class="container" >
+          <br>
+          <br>
+          <br>
+          <h1>PitchMe</h1>
+          <p class="lead text-muted">This is a simple application where you can upload your one minute pithces for those impormptu Interviews, good luck!.</p>
+          <p>
+            <a href="/category/pickuplines" class="btn btn-secondary my-2">BlogPosts</a>
+            <a href="/category/product" class="btn btn-primary my-2">ToggleQuote</a>
+          </p>
+          <br>
+          <br>
+        </div>
+      </section>
+      <div class="container">
+        <div class="card mb-3">
+          <div class="card-body">
+            <a href="/category/promotion" class="card-link">Promotion</a>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <a href="category/pickuplines" class="card-link">Pickuplines</a>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <a href="/category/product" class="card-link">Products</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a href="/category/interview" class="card-link">Interview</a>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock%}
