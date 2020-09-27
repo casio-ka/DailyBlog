@@ -1,0 +1,9 @@
+Hello {{user.username}},
+
+Welcome to DailyBlog
+Thank you for signing up to our app.
+You now have full access and can create new blogs and interact with the community.
+Have fun and remember to observe community guidlines. 
+
+Cheers!! 
+DailyBlog Team.
