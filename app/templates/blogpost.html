@@ -1,0 +1,41 @@
+{% extends 'base.html'%}
+{% import 'bootstrap/wtf.html' as wtf%} 
+
+{% block styles%}
+    {{ super() }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        <section class="jumbotron text-center" style="background-image: url('static/img/home-bg.jpg')">
+            <div class="col-md-5 p-lg-5 mx-auto my-5" >
+                <h1 class="display-4 font-weight-normal">{{blogpost.title|upper}}</h1>
+                <p class="lead font-weight-normal">{{blogpost.subtitle}}</p>
+                <br>
+                <br>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="container">
+<div class="card mb-3">
+    <h4 class="text-center"><i class="fa fa-comments"></i>  Comments:</h4>
+    {% for comment in comments %}
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-info">{{comment.comment|capitalize}}</li>
+            <footer class="blockquote-footer">Posted on: <cite title="Source Title">{{comment.posted.strftime('%Y-%m-%d')}}</cite></footer>
+            <footer class="blockquote-footer">By : {{comment.user.username|capitalize}} </footer>
+        </ul>            
+    
+    {% endfor %}
+        {% if current_user.is_authenticated %}
+        <div class="container">
+        {{ wtf.quick_form(comment_form) }}
+        </div>
+    {%endif%}
+</div>
+
+</div>
+{% endblock %}
