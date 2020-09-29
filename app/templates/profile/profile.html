@@ -1,5 +1,11 @@
 {% extends 'base.html'%}
 
+{% block styles%}
+    {{ super() }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+
+{% endblock %}
+
 {% block content %}
 <div class="container">
 <br>
@@ -7,10 +13,10 @@
 <br>
 <br>
 <br>
-<div class="row">
+<div class="row mb-5">
 
 <!-- displaying  Username-->
-  <div class="col-md-4">
+  <div class="col-sm-8">
     <h3> {{user.username| capitalize}} </h3>
 
     <!--Displaying user bio-->
@@ -27,7 +33,7 @@
   </div>
 
   <!--Display profile photo-->
-  <div class="col-md-4">
+  <div class="col-sm-4">
 
     {% if user.profile_pic_path %}
     <img src="{{url_for('static',filename=user.profile_pic_path)}}" alt="" class="img-thumbnail">
@@ -44,6 +50,26 @@
       {% endif %}
       
   </div>
+</div>
+<br>
+<br>
+<h1 class="text-center mt-2"><i class="fas fa-stream"></i> Your BlogPosts</h1>
+<div class="row mt-5">
+
+  <div class=" card mb-3 w-100">
+    {% for blogpost in blogposts %}
+    <div class="card-header">{{ blogpost.title }}</div>
+    <div class="card-body">
+        <blockquote class="blockquote mb-0">
+        <p>{{ blogpost.subtitle }}</p>
+        <footer class="blockquote-footer">Posted on {{ blogpost.dateposted.strftime('%B %d, %Y') }}</footer>
+        </blockquote>
+        <a href="{{url_for('main.view_blogpost', blogpost_id=blogpost.id)}}"><button class="mt-2"><i class="fas fa-angle-double-right"></i>View BlogPost</button></a>
+        <a action="{{url_for('main.edit_blogpost',id=blogpost.id)}}"><button class="mt-2"><i class="fas fa-pen"></i></i>Edit BlogPost</button></a>
+    </div>
+    </div>
+    {% endfor %}
+
 </div>
 </div>
 {% endblock %}
