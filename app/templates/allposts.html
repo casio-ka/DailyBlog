@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+
+{% block styles%}
+    {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/myposts.css')}}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        <section class="jumbotron text-center" style="background-image: url('static/img/home-bg.jpg')">
+            <div class="col-md-5 p-lg-5 mx-auto my-5" >
+                <h1 class="display-4 font-weight-normal">My BlogPosts</h1>
+                <p class="lead font-weight-normal">Here is a list of your blogposts</p>
+                <br>
+                <br>
+            </div>
+        </section>
+    </div>
+</div>
+    
+<div class="container">
+    <a href="{{url_for('main.new_blogpost')}}" ><button class="mb-3"><i class="fas fa-plus-square"></i> New Blogpost</button></a>
+
+    <div class=" card mb-3">
+        {% for blogpost in blogposts %}
+        <div class="card-header">{{ blogpost.title }}</div>
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+            <p>{{ blogpost.subtitle }}</p>
+            <footer class="blockquote-footer">Posted by {{ blogpost.author }} on {{ blogpost.dateposted.strftime('%B %d, %Y') }}</footer>
+            </blockquote>
+            <a href="{{url_for('main.view_blogpost', blogpost_id=blogpost.id)}}"><button class="mt-2"><i class="fas fa-angle-double-right"></i>View BlogPost</button></a>
+        </div>
+        </div>
+        {% endfor %}
+    </div>
+  {% endblock %}
