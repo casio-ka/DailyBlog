@@ -8,6 +8,11 @@ from datetime import datetime
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+class Quote:
+    def __init__(self,id,author,quote):
+        self.id = id
+        self.author = author
+        self.quote = quote
 
 class PhotoProfile(db.Model):
     __tablename__ = 'profile_photos'
@@ -99,10 +104,12 @@ class Comments(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.String(300))
+    name = db.Column(db.String(255),index = True)
     posted = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     user = db.relationship("User", foreign_keys=user_id)
     blogpost_id = db.Column(db.Integer, db.ForeignKey("blogposts.id"))
+    
 
     def save_comment(self):
         db.session.add(self)
