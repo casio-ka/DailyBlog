@@ -34,6 +34,10 @@
         <div class="container">
         {{ wtf.quick_form(comment_form) }}
         </div>
+    {%else%}
+    <div class="container">
+        {{ wtf.quick_form(usercomment_form) }}
+    </div>
     {%endif%}
 </div>
 
