@@ -20,10 +20,15 @@ class EditPostForm(FlaskForm):
     content = TextAreaField('BlogPost', validators=[Required()])
     submit = SubmitField('Submit')
 
-class CommentForm(FlaskForm):
+class WriterCommentForm(FlaskForm):
+    description = TextAreaField('Add a comment:', validators = [Required()])
+    submit = SubmitField('Submit')
+
+class UserCommentForm(FlaskForm):
+    name = StringField('Enter your name:',validators = [Required()])
     description = TextAreaField('Add a comment:', validators = [Required()])
     submit = SubmitField('Submit')
 
 class SubscribeForm(FlaskForm):
-    email = StringField( 'Enter your email address', validators=[Required()])
+    email = StringField( render_kw={"placeholder": "Enter your email address"}, validators=[Required()])
     submit = SubmitField('Subscribe')
