@@ -1,23 +1,38 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
 from . import main
-from .forms import UpdateProfile, BlogPostForm,EditPostForm,CommentForm
+from .forms import UpdateProfile, BlogPostForm,EditPostForm,SubscribeForm,WriterCommentForm,UserCommentForm
 from flask_login import login_required, current_user
 from ..requests import get_quotes
 from .. import db,photos
-from ..models import User,Role,BlogPost,Comments
+from sqlalchemy import asc,desc
+from ..models import User,Role,BlogPost,Comments, Subscribers
+from ..email import mail_message
 
 @main.route('/', methods = ['GET','POST'],defaults={"page": 1})
 @main.route('/<int:page>', methods=['GET'])
 def index(page):
     page = page
-    per_page = 4
-    posts = BlogPost.query.order_by(BlogPost.posted.des()).paginate(page,per_page,error_out=False)
+    per_page = 3
+    latest = BlogPost.query.order_by(desc(BlogPost.dateposted)).limit(3).all()
     quote = get_quotes()
-    subscribe
+    subform= SubscribeForm()
 
     title = 'Home - Welcome to The Pitch of Your Life'
+    
+    if subform.validate_on_submit():
 
-    return render_template('index.html', title=title)
+        if Subscribers.query.filter_by(email = subform.email.data).first():
+            flash ('Email already in user', 'danger')
+        else:
+            sub = User(email = subform.email.data)
+            db.session.add(sub)
+            db.session.commit()
+
+            mail_message("DailyBlog Subscriber" , "email/sub_user", sub.email)
+            flash("Subscribed successfully","success")
+            return redirect(request.referrer)
+
+    return render_template('index.html', subform=subform, quote=quote, latest=latest)
 
 
 @main.route('/user/<uname>')
@@ -82,30 +97,47 @@ def new_blogpost():
     title = 'New Blogpost'    
     return render_template('newpost.html' ,blog_form=form, title=title)
 
-@main.route('/posts',methods=['GET', 'POST'] )
+@main.route('/posts', methods = ['GET','POST'],defaults={"page": 1})
+@main.route('/posts<int:page>',methods=['GET'] )
 @login_required
-def get_blogposts():
-    blogposts = BlogPost.query.all()
+def get_blogposts(page):
+    page = page
+    per_page = 3
+    blogposts = BlogPost.query.order_by(BlogPost.dateposted.desc()).paginate(page,per_page,error_out=False)
 
     return render_template('allposts.html',blogposts=blogposts)
+@main.route('/blogpost/view/<blogpost_id>', methods=['POST'])
+def post_comment(blogpost_id):
+
+    blogpost = BlogPost.query.filter_by(id=blogpost_id).first()
+    comments = Comments.get_comments(blogpost_id)
+    comment_form = WriterCommentForm()
+    usercomment_form = UserCommentForm()
+
+    if comment_form.validate_on_submit or usercomment_form.validate_on_submit():
+        if current_user.is_authenticated:
+            name = current_user.username
+            comment = comment_form.description.data
+        else:
+            name = usercomment_form.name.data
+            comment = usercomment_form.description.data
+        
+        new_comment = Comments(name=name, comment=comment, blogpost_id=blogpost_id)
+        new_comment.save_comment()
+
+        return redirect(request.referrer)
 
 @main.route('/blogpost/view/<blogpost_id>',methods=['GET','POST'])
 def view_blogpost(blogpost_id):
 
     blogpost = BlogPost.query.filter_by(id=blogpost_id).first()
+    user = User.query.filter_by(id=blogpost.user_id)
     comments = Comments.get_comments(blogpost_id)
-    comment_form = CommentForm()
-    if current_user.is_authenticated:
-        
-        if comment_form.validate_on_submit():
-            comments = comment_form.description.data
+    comment_form = WriterCommentForm()
+    usercomment_form = UserCommentForm()
 
-            new_comment = Comments(comment=comments, user_id=current_user.id, blogpost_id=blogpost_id)
-            new_comment.save_comment()
-        
-        comments = Comments.get_comments(blogpost_id)
+    return render_template('blogpost.html', blogpost_id=blogpost_id, blogpost=blogpost, comments=comments, comment_form=comment_form, usercomment_form=usercomment_form, user=user)
 
-    return render_template('blogpost.html', blogpost_id=blogpost_id, blogpost=blogpost, comments=comments, comment_form=comment_form)
 
 @main.route('/editpost/<int:id>', methods = ['GET','POST'])
 def edit_blogpost(blogpost_id):
