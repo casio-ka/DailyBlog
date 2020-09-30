@@ -13,13 +13,6 @@ class BlogPostForm(FlaskForm):
     author = StringField('Author', validators=[Required()])
     content = TextAreaField('BlogPost', validators=[Required()])
     submit = SubmitField('Submit')
-class EditPostForm(FlaskForm):
-    title = StringField('Title', validators=[Required()])
-    subtitle = StringField('Subtitle', validators=[Required()])
-    author = StringField('Author', validators=[Required()])
-    content = TextAreaField('BlogPost', validators=[Required()])
-    submit = SubmitField('Submit')
-
 class WriterCommentForm(FlaskForm):
     description = TextAreaField('Add a comment:', validators = [Required()])
     submit = SubmitField('Submit')
