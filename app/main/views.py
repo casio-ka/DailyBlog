@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
 from . import main
-from .forms import UpdateProfile, BlogPostForm,EditPostForm,SubscribeForm,WriterCommentForm,UserCommentForm
+from .forms import UpdateProfile, BlogPostForm,SubscribeForm,WriterCommentForm,UserCommentForm
 from flask_login import login_required, current_user
 from ..requests import get_quotes
 from .. import db,photos
@@ -97,8 +97,9 @@ def new_blogpost():
     title = 'New Blogpost'    
     return render_template('newpost.html' ,blog_form=form, title=title)
 
-@main.route('/posts', methods = ['GET','POST'],defaults={"page": 1})
-@main.route('/posts<int:page>',methods=['GET'] )
+
+@main.route('/blogposts', methods = ['GET','POST'],defaults={"page": 1})
+@main.route('/blogposts<int:page>',methods=['GET'] )
 def get_blogposts(page):
     page = page
     per_page = 3
@@ -138,18 +139,30 @@ def view_blogpost(blogpost_id):
     return render_template('blogpost.html', blogpost_id=blogpost_id, blogpost=blogpost, comments=comments, comment_form=comment_form, usercomment_form=usercomment_form, user=user)
 
 
-@main.route('/editpost/<int:id>', methods = ['GET','POST'])
-def edit_blogpost(blogpost_id):
-    blogpost = BlogPost.query().filter(id==id).first()
+@main.route('/blogpost/update/<int:blogpost_id>', methods = ['GET','POST'])
+@login_required
+def update_blogpost(blogpost_id):
+    blogpost = BlogPost.query.filter_by(id=blogpost_id).first()
     form = BlogPostForm()
 
-    blogpost.blog_title = request.form.get['title']
-    blogpost.blog_subtitle = request.form.get['subtitle']
-    blogpost.author = request.form.get['author']
-    blogpost.content = request.form.get['content']
-
     if form.validate_on_submit():
+        blogpost.title = form.title.data
+        blogpost.subtitle = form.subtitle.data
+        blogpost.author = form.author.data
+        blogpost.content = form.content.data
         db.session.commit()
-        return redirect(url_for('.editpost'))
 
-    return render_template('allposts.html', user_id=current_user.id, blogpost=blogpost)
+        return redirect(url_for('.index'))
+
+    else:
+        title = 'Edit Post'
+        return render_template('newpost.html', title= title, blogpost=blogpost, blog_form=form, action="Edit" )
+
+@main.route('/blogpost/edit/<blogpost_id>', methods=['GET'])
+def edit_blogpost(blogpost_id):
+    comment_form = WriterCommentForm()
+    usercomment_form = UserCommentForm()
+    blogpost = BlogPost.query.filter_by(id=blogpost_id).first()
+    user = User.query.filter_by(id=blogpost.user_id)
+    comments = Comments.get_comments(blogpost_id)
+    return render_template('editpost.html', blogpost=blogpost, comments=comments, blogpost_id=blogpost.id, comment_form = comment_form, usercomment_form=usercomment_form, user =user)
