@@ -99,7 +99,6 @@ def new_blogpost():
 
 @main.route('/posts', methods = ['GET','POST'],defaults={"page": 1})
 @main.route('/posts<int:page>',methods=['GET'] )
-@login_required
 def get_blogposts(page):
     page = page
     per_page = 3
