@@ -97,6 +97,14 @@ def new_blogpost():
     title = 'New Blogpost'    
     return render_template('newpost.html' ,blog_form=form, title=title)
 
+@main.route('/blogpost/delete/<int:blogpost_id>/',methods=['GET'])
+@login_required
+def delete_post(blogpost_id):
+    blogpost = BlogPost.query.filter_by(id=blogpost_id).first_or_404()
+    db.session.delete(blogpost)
+    db.session.commit()
+    
+    return redirect(request.referrer)
 
 @main.route('/blogposts', methods = ['GET','POST'],defaults={"page": 1})
 @main.route('/blogposts<int:page>',methods=['GET'] )
@@ -126,6 +134,16 @@ def post_comment(blogpost_id):
         new_comment.save_comment()
 
         return redirect(request.referrer)
+
+@main.route('/blogpost/<int:comment_id>/delete')
+@login_required
+def delete_comment(comment_id):
+    
+    comment = Comments.query.filter_by(id=comment_id).first_or_404()
+    db.session.delete(comment)
+    db.session.commit()
+    
+    return redirect(request.referrer)
 
 @main.route('/blogpost/view/<blogpost_id>',methods=['GET','POST'])
 def view_blogpost(blogpost_id):
