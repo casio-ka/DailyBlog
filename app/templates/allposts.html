@@ -32,7 +32,7 @@
             <footer class="blockquote-footer">Posted by {{ blogpost.author }} on {{ blogpost.dateposted.strftime('%B %d, %Y') }}</footer>
             </blockquote>
             <a href="{{url_for('main.view_blogpost', blogpost_id=blogpost.id)}}"><button class="mt-2"><i class="fas fa-angle-double-right"></i>View BlogPost</button></a>
-            <a href="{{url_for('main.post_comment', blogpost_id=blogpost.id)}}" class="mt-3"><i class="fa fa-comments " style="color: #16697A;">  Add a comment</a></i>
+            <button><a href="{{url_for('main.post_comment', blogpost_id=blogpost.id)}}" class="mt-3"><i class="fa fa-comments " style="color: #000000;">  Add a comment</a></i></button>
         </div>
         </div>
         {% endfor %}
