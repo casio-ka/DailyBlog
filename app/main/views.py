@@ -99,7 +99,7 @@ def new_blogpost():
 
 @main.route('/blogpost/delete/<int:blogpost_id>/',methods=['GET'])
 @login_required
-def delete_post(blogpost_id):
+def delete_blogpost(blogpost_id):
     blogpost = BlogPost.query.filter_by(id=blogpost_id).first_or_404()
     db.session.delete(blogpost)
     db.session.commit()
