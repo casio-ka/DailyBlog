@@ -21,6 +21,13 @@ class PhotoProfile(db.Model):
     pic_path = db.Column(db.String())
     user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
 
+class HeaderImage(db.Model):
+    __tablename__='header_image'
+
+    id = db.Column(db.Integer,primary_key = True)
+    pic_path = db.Column(db.String())
+    blogpost_id = db.Column(db.Integer,db.ForeignKey("blogposts.id"))
+
 
 class User(UserMixin,db.Model):
     __tablename__ = 'users'
@@ -73,7 +80,9 @@ class BlogPost (db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', foreign_keys=user_id)
     dateposted = db.Column(db.DateTime, default=datetime.utcnow)
-    comments = db.relationship('Comments', backref='title', lazy='dynamic')
+    comments = db.relationship('Comments', backref='blogposts', lazy='dynamic')
+    header_img_path = db.Column(db.String())
+    headerimage = db.relationship('HeaderImage',backref = 'blogposts',lazy = "dynamic")
 
     def save_blogpost(self):
         db.session.add(self)
